@@ -1,0 +1,6 @@
+{
+  "name": "HBO Student Dagboek & Progress Tracker",
+  "description": "Persoonlijk dagboekje en voortgangstracker voor HBO-studenten per User Story met reflectie en motivatie.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
