@@ -71,11 +71,11 @@ export const Header: React.FC<HeaderProps> = ({
         {/* User Info from theme */}
         <div className="hidden md:flex items-center gap-2.5 border-l pl-5 border-slate-200">
           <div className="text-right">
-            <p className="text-xs font-bold text-slate-900 leading-tight">Daan van Veen</p>
+            <p className="text-xs font-bold text-slate-900 leading-tight">Daan Rietveld</p>
             <p className="text-[10px] text-slate-500 leading-tight">B2C Marketing Student</p>
           </div>
           <div className="w-8 h-8 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 flex items-center justify-center font-bold text-xs">
-            DV
+            DR
           </div>
         </div>
       </div>
