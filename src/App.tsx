@@ -3,251 +3,144 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { Header } from './components/Header';
-import { DailyQuoteCard } from './components/DailyQuoteCard';
-import { StoryCard } from './components/StoryCard';
-import { ProgressCard } from './components/ProgressCard';
-import { CriteriaSection } from './components/CriteriaSection';
-import { DailyReflectionSection } from './components/DailyReflectionSection';
-import { DiarySection } from './components/DiarySection';
-import { TYPE_STORIES, getCurrentStory } from './data/storyRegistry';
-import { StorageService } from './services/storageService';
-import { CriteriaProgressState, CriterionStatus, QuestionAnswer } from './types';
-import { BookOpen, CheckCircle2, Target, HelpCircle, Code2, Layers } from 'lucide-react';
+import { useEffect, useState, type ReactNode } from 'react';
+import { ArrowRight, ExternalLink, Menu, Sparkles, X } from 'lucide-react';
 
-export default function App() {
-  const [currentStoryCode, setCurrentStoryCode] = useState<string>('RS');
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [progress, setProgress] = useState<CriteriaProgressState>({});
-  const [showArchInfo, setShowArchInfo] = useState<boolean>(false);
+type Page = 'home' | 'over-mij' | 'bewijs';
 
-  const currentStory = getCurrentStory(currentStoryCode);
+const navigation: { id: Page; label: string }[] = [
+  { id: 'home', label: 'Home' },
+  { id: 'over-mij', label: 'Over mij' },
+  { id: 'bewijs', label: 'Mijn bewijs' },
+];
+
+const evidenceGroups = [
+  {
+    title: '[VOEG HIER EEN LEERUITKOMST TOE]',
+    description: '[KORTE UITLEG VAN DEZE LEERUITKOMST]',
+    evidence: [
+      { title: '[TITEL VAN MIJN BEWIJS]', description: '[KORTE BESCHRIJVING VAN MIJN BEWIJS]', url: 'https://voorbeeld.nl/vervang-dit-met-jouw-link' },
+      { title: '[NOG EEN BEWIJS]', description: '[KORTE BESCHRIJVING VAN MIJN BEWIJS]', url: 'https://voorbeeld.nl/vervang-dit-met-jouw-link' },
+    ],
+  },
+  {
+    title: '[VOEG HIER EEN TWEEDE LEERUITKOMST TOE]',
+    description: '[KORTE UITLEG VAN DEZE LEERUITKOMST]',
+    evidence: [{ title: '[TITEL VAN MIJN BEWIJS]', description: '[KORTE BESCHRIJVING VAN MIJN BEWIJS]', url: 'https://voorbeeld.nl/vervang-dit-met-jouw-link' }],
+  },
+];
+
+function getPageFromPath(): Page {
+  const path = window.location.pathname.replace(/^\//, '');
+  return navigation.some((item) => item.id === path) ? (path as Page) : 'home';
+}
+
+function App() {
+  const [page, setPage] = useState<Page>(getPageFromPath);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const loaded = StorageService.getCriteriaProgress(currentStory);
-    setProgress(loaded);
-  }, [currentStory]);
+    const handlePopState = () => setPage(getPageFromPath());
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
-  const handleUpdateCriterionStatus = (criterionId: string, status: CriterionStatus, notes?: string) => {
-    const updated = StorageService.updateCriterionStatus(currentStory, criterionId, status, notes);
-    setProgress({ ...updated });
-  };
-
-  const handleSyncCriteriaFromAnswers = (answers: QuestionAnswer[]) => {
-    const updated = { ...progress };
-
-    const mapStatus = (answer: string | null): CriterionStatus => {
-      if (answer === 'ja') return 'behaald';
-      if (answer === 'gedeeltelijk') return 'bezig';
-      return 'nog_niet';
-    };
-
-    answers.forEach((a) => {
-      if (a.questionId === 'rq-1') {
-        updated['ac-1'] = { status: mapStatus(a.answer), notes: a.explanation || updated['ac-1']?.notes, lastUpdated: new Date().toISOString() };
-      } else if (a.questionId === 'rq-2') {
-        updated['ac-2'] = { status: mapStatus(a.answer), notes: a.explanation || updated['ac-2']?.notes, lastUpdated: new Date().toISOString() };
-      } else if (a.questionId === 'rq-3') {
-        updated['ac-3'] = { status: mapStatus(a.answer), notes: a.explanation || updated['ac-3']?.notes, lastUpdated: new Date().toISOString() };
-      } else if (a.questionId === 'rq-4') {
-        updated['ac-4'] = { status: mapStatus(a.answer), notes: a.explanation || updated['ac-4']?.notes, lastUpdated: new Date().toISOString() };
-      } else if (a.questionId === 'rq-5') {
-        const qStatus = mapStatus(a.answer);
-        ['qc-1', 'qc-2', 'qc-3', 'qc-4'].forEach((qcId) => {
-          updated[qcId] = { status: qStatus, notes: a.explanation || updated[qcId]?.notes, lastUpdated: new Date().toISOString() };
-        });
-      }
-    });
-
-    StorageService.saveCriteriaProgress(updated);
-    setProgress(updated);
+  const navigate = (nextPage: Page) => {
+    window.history.pushState({}, '', nextPage === 'home' ? '/' : `/${nextPage}`);
+    setPage(nextPage);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
-      {/* Sticky Header with Navigation Tabs */}
-      <Header
-        currentStory={currentStory}
-        allStories={TYPE_STORIES}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-      />
+    <div className="site-shell">
+      <header className="site-header">
+        <div className="container header-inner">
+          <button className="brand" onClick={() => navigate('home')} aria-label="Ga naar Home">
+            <span className="brand-mark"><Sparkles size={17} /></span>
+            <span><strong>Daan Rietveld</strong><small>Futureproof met AI!</small></span>
+          </button>
+          <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu openen">
+            {menuOpen ? <X /> : <Menu />}
+          </button>
+          <nav className={`main-nav ${menuOpen ? 'is-open' : ''}`} aria-label="Hoofdnavigatie">
+            {navigation.map((item) => (
+              <button key={item.id} className={page === item.id ? 'active' : ''} onClick={() => navigate(item.id)}>
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* VIEW 1: UNIFIED DASHBOARD */}
-        {activeTab === 'dashboard' && (
-          <div className="space-y-7">
-            {/* Top Grid: Quote of the Day & Progress Summary */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              <div className="lg:col-span-6 flex flex-col">
-                <DailyQuoteCard />
-              </div>
-              <div className="lg:col-span-6 flex flex-col">
-                <ProgressCard
-                  story={currentStory}
-                  progress={progress}
-                  onOpenReflection={() => setActiveTab('questions')}
-                />
-              </div>
-            </div>
-
-            {/* Mijn User Story */}
-            <StoryCard story={currentStory} />
-
-            {/* Criteria Overview */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <CriteriaSection
-                  story={currentStory}
-                  progress={progress}
-                  onUpdateStatus={handleUpdateCriterionStatus}
-                  filterType="acceptance"
-                />
-              </div>
-              <div>
-                <CriteriaSection
-                  story={currentStory}
-                  progress={progress}
-                  onUpdateStatus={handleUpdateCriterionStatus}
-                  filterType="quality"
-                />
-              </div>
-            </div>
-
-            {/* Daily Reflection & Diary Preview */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-              <div className="xl:col-span-7">
-                <DailyReflectionSection
-                  story={currentStory}
-                  onSyncCriteriaFromAnswers={handleSyncCriteriaFromAnswers}
-                />
-              </div>
-              <div className="xl:col-span-5">
-                <DiarySection storyCode={currentStory.code} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* VIEW 2: MIJN USER STORY */}
-        {activeTab === 'story' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <StoryCard story={currentStory} />
-
-            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-xs space-y-4">
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Target className="w-4 h-4 text-indigo-600" />
-                Koppeling met Leeruitkomsten (LU 1 & LU 3)
-              </h3>
-              <p className="text-sm text-slate-700 leading-relaxed">
-                Deze Research Story legt een onderbouwde basis om te bepalen welke AI-toepassingen daadwerkelijk waarde toevoegen binnen het B2C werkveld en welke skills je dient te ontwikkelen om als HBO marketeer future-proof te opereren.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
-                  <span className="font-bold text-slate-900 block">LU 1: Analyseren & Onderzoeken</span>
-                  <span className="text-slate-600">
-                    Onderbouwd in kaart brengen van AI-kansen, bedreigingen en ethiek via triangulatie en betrouwbare bronnen.
-                  </span>
-                </div>
-                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
-                  <span className="font-bold text-slate-900 block">LU 3: Professionele Vaardigheden</span>
-                  <span className="text-slate-600">
-                    Identificatie van de top 5 AI-skills en feedbackverwerking in het professionele werkveld.
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <ProgressCard
-              story={currentStory}
-              progress={progress}
-              onOpenReflection={() => setActiveTab('questions')}
-            />
-          </div>
-        )}
-
-        {/* VIEW 3: ACCEPTATIECRITERIA */}
-        {activeTab === 'acceptance' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <CriteriaSection
-              story={currentStory}
-              progress={progress}
-              onUpdateStatus={handleUpdateCriterionStatus}
-              filterType="acceptance"
-            />
-          </div>
-        )}
-
-        {/* VIEW 4: KWALITEITSCRITERIA */}
-        {activeTab === 'quality' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <CriteriaSection
-              story={currentStory}
-              progress={progress}
-              onUpdateStatus={handleUpdateCriterionStatus}
-              filterType="quality"
-            />
-          </div>
-        )}
-
-        {/* VIEW 5: DAGELIJKSE VRAGEN */}
-        {activeTab === 'questions' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <DailyReflectionSection
-              story={currentStory}
-              onSyncCriteriaFromAnswers={handleSyncCriteriaFromAnswers}
-            />
-          </div>
-        )}
-
-        {/* VIEW 6: MIJN DAGBOEK */}
-        {activeTab === 'diary' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <DiarySection storyCode={currentStory.code} />
-          </div>
-        )}
+      <main className="container page-content">
+        {page === 'home' && <HomePage navigate={navigate} />}
+        {page === 'over-mij' && <AboutPage />}
+        {page === 'bewijs' && <EvidencePage />}
       </main>
 
-      {/* Footer & Architecture Readiness Note */}
-      <footer className="mt-auto bg-white border-t border-slate-200 py-6 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span>HBO Student Dagboek & Progress Tracker</span>
-            <span>•</span>
-            <span className="font-medium text-slate-700">RS – Research Story</span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowArchInfo(!showArchInfo)}
-              className="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 font-medium"
-            >
-              <Code2 className="w-3.5 h-3.5" />
-              <span>Modulaire architectuur (Type Story Register)</span>
-            </button>
-          </div>
+      <footer className="site-footer">
+        <div className="container footer-inner">
+          <span>Portfolio van Daan Rietveld</span>
+          <span>Minor Futureproof met AI!</span>
         </div>
-
-        {/* Architecture Info Drawer */}
-        {showArchInfo && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs text-slate-600">
-              <div className="flex items-center gap-2 font-bold text-slate-900">
-                <Layers className="w-4 h-4 text-indigo-600" />
-                <span>Flexibele Type Story Architectuur</span>
-              </div>
-              <p>
-                De applicatie is gebouwd met een strikt modulaire architectuur via <code className="bg-slate-200/80 px-1.5 py-0.5 rounded text-slate-800 font-mono text-[11px]">TypeStory</code> en het <code className="bg-slate-200/80 px-1.5 py-0.5 rounded text-slate-800 font-mono text-[11px]">TYPE_STORIES</code> register. Op dit moment is uitsluitend de gevraagde <strong>RS (Research Story)</strong> actief, met exact de 4 acceptatiecriteria en 4 kwaliteitscriteria.
-              </p>
-              <p>
-                Toekomstige Type Stories (zoals DS – Design Story of IS – Implementation Story) kunnen naadloos worden toegevoegd door simpelweg een object toe te voegen aan het register, zonder dat de layout, het dagboek of de voortgangslogica herschreven hoeft te worden.
-              </p>
-            </div>
-          </div>
-        )}
       </footer>
     </div>
   );
 }
+
+function HomePage({ navigate }: { navigate: (page: Page) => void }) {
+  return (
+    <>
+      <section className="hero section-grid">
+        <div className="hero-copy reveal">
+          <p className="eyebrow"><span /> Persoonlijk portfolio</p>
+          <h1>Mijn route naar een <em>futureproof</em> toekomst.</h1>
+          <p className="intro">Ik ben Daan Rietveld, HBO-student en deelnemer aan de minor <strong>Futureproof met AI!</strong> In dit portfolio verzamel ik mijn werk, onderzoeken en leerproces.</p>
+          <div className="button-row">
+            <button className="button button-primary" onClick={() => navigate('bewijs')}>Bekijk mijn bewijs <ArrowRight size={17} /></button>
+            <button className="text-button" onClick={() => navigate('over-mij')}>Meer over mij <ArrowRight size={16} /></button>
+          </div>
+        </div>
+        <div className="photo-placeholder reveal delay-one">
+          <img src="/assets/aistudio/IMG_1770.JPG" alt="Portret van Daan Rietveld" className="profile-photo" />
+        </div>
+      </section>
+      <section className="home-strip">
+        <div><span className="number">01</span><h2>Wie ik ben</h2><p>Een korte introductie over mij als student en persoon.</p></div>
+        <div><span className="number">02</span><h2>Mijn verhaal</h2><p>Mijn ervaringen, talenten, passies en ambities.</p></div>
+        <div><span className="number">03</span><h2>Mijn bewijs</h2><p>Een overzichtelijke plek voor mijn bewijzen per leeruitkomst.</p></div>
+      </section>
+    </>
+  );
+}
+
+function AboutPage() {
+  const sections = [
+    ['Wie ben ik?', 'Ik ben een enthousiaste en nieuwsgierige student Commerciële Economie met een sterke interesse in marketing en e-commerce. Ik ben gemotiveerd om mezelf te ontwikkelen en ben benieuwd naar wat de praktijk van het bedrijfsleven mij kan leren. Ik werk graag samen met anderen en vind het leuk om met gemotiveerde mensen nieuwe ideeën uit te wisselen en van elkaar te leren. Ik ben sociaal ingesteld en sta altijd klaar om nieuwe uitdagingen aan te gaan.'],
+    ['Mijn opleiding', 'In 2024 ben ik gestart met de opleiding Commerciële Economie. Tijdens mijn studie merkte ik al snel dat mijn interesses vooral liggen bij marketing en e-commerce. Ik vind het interessant om na te denken over de behoeften van consumenten en creatieve oplossingen te bedenken voor verschillende vraagstukken. In mijn eerste studiejaar heb ik mijn propedeuse behaald en inmiddels heb ik ook mijn tweede jaar afgerond.'],
+    ['Mijn minor', 'Sinds september 2026 volg ik de minor Futureproof met AI. Deze minor sprak mij direct aan, omdat ik verwacht dat AI een steeds grotere rol gaat spelen binnen mijn toekomstige werkveld. Ik wil daarom niet alleen begrijpen wat AI kan betekenen voor marketing, maar vooral leren hoe ik AI op een slimme, verantwoordelijke en praktische manier kan toepassen.'],
+    ['Mijn ontwikkeling', 'Met deze minor wil ik mezelf verder ontwikkelen en de AI-vaardigheden opbouwen die ik in mijn toekomstige carrière nodig heb. Ik ben benieuwd waar deze ontwikkeling mij brengt en welke nieuwe mogelijkheden AI mij in de toekomst kan bieden.'],
+  ];
+  return <PageIntro eyebrow="Over mij" title="De persoon achter dit portfolio." intro="Dit is mijn persoonlijke ruimte. Hier vertel ik wie ik ben, wat mij drijft en waar ik naartoe wil." >
+    <div className="about-layout">
+      <div className="about-photo photo-placeholder">
+        <img src="/assets/aistudio/IMG_1770.JPG" alt="Portret van Daan Rietveld" className="profile-photo" />
+      </div>
+      <div className="about-sections">{sections.map(([title, text]) => <section className="content-block" key={title}><p className="block-label">{title}</p><p>{text}</p></section>)}</div>
+    </div>
+  </PageIntro>;
+}
+
+function EvidencePage() {
+  return <PageIntro eyebrow="Mijn bewijs" title="Leren door te doen, delen en onderbouwen." intro="Op deze pagina verzamel ik de bewijzen waarmee ik mijn behaalde leeruitkomsten aantoon. Grote bestanden staan extern en worden hier gelinkt.">
+    <div className="evidence-notice"><strong>Praktische afspraak</strong><span>Gebruik bijvoorbeeld OneDrive voor documenten en YouTube voor video’s. Zo blijven grote bestanden buiten GitHub en Vercel.</span></div>
+    <div className="evidence-list">{evidenceGroups.map((group) => <section className="evidence-group" key={group.title}><div className="group-heading"><span className="number">LU</span><div><h2>{group.title}</h2><p>{group.description}</p></div></div><div className="evidence-cards">{group.evidence.map((item) => <article className="evidence-card" key={item.title}><div><h3>{item.title}</h3><p>{item.description}</p></div><a className="evidence-link" href={item.url} target="_blank" rel="noreferrer">Bekijk bewijs <ExternalLink size={15} /></a></article>)}</div></section>)}</div>
+  </PageIntro>;
+}
+
+function PageIntro({ eyebrow, title, intro, children }: { eyebrow: string; title: string; intro: string; children: ReactNode }) {
+  return <><section className="page-intro reveal"><p className="eyebrow"><span /> {eyebrow}</p><h1>{title}</h1><p className="intro">{intro}</p></section><div className="page-body reveal delay-one">{children}</div></>;
+}
+
+export default App;
