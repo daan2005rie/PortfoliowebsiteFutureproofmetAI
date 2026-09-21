@@ -351,7 +351,7 @@ function ResearchStoryPage({ navigate }: { navigate: (page: Page) => void }) {
           <div className="infographic-main-card">
             <img src="/assets/aistudio/Infographic%20AI%20onderzoek.jpeg" alt="Infographic over AI-onderzoek voor de AI blog" />
           </div>
-          <a className="download-button" href="/assets/aistudio/Infographic%20AI%20onderzoek.jpeg" download>
+          <a className="download-button" href="/assets/aistudio/Infographic%20AI%20onderzoek.jpeg" download="Infographic AI onderzoek.jpeg">
             Download infografie
           </a>
           <div className="infographic-extra-card">
