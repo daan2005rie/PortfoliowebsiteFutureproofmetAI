@@ -5,7 +5,6 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import { ArrowRight, ExternalLink, Menu, Sparkles, X } from 'lucide-react';
-import { Chatbot } from './components/Chatbot';
 
 type Page = 'home' | 'over-mij' | 'mijn-ai-app' | 'research-story-ai-blog' | 'bewijs';
 
@@ -115,7 +114,6 @@ function HomePage({ navigate }: { navigate: (page: Page) => void }) {
         <div><span className="number">02</span><h2>Mijn verhaal</h2><p>Mijn ervaringen, talenten, passies en ambities.</p></div>
         <div><span className="number">03</span><h2>Mijn bewijs</h2><p>Een overzichtelijke plek voor mijn bewijzen per leeruitkomst.</p></div>
       </section>
-      <Chatbot />
     </>
   );
 }
