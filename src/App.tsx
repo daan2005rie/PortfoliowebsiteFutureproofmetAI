@@ -6,7 +6,17 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { ArrowRight, ExternalLink, Menu, Sparkles, X } from 'lucide-react';
 
-type Page = 'home' | 'over-mij' | 'mijn-ai-app' | 'research-story-ai-blog' | 'bewijs';
+type Page = 'home' | 'over-mij' | 'mijn-ai-app' | 'research-story-ai-blog' | 'ai-onderzoek' | 'supabase-blog' | 'bewijs';
+type EvidenceStory = {
+  sprint: number;
+  learningOutcomes: number[];
+  title: string;
+  description: string;
+  evidenceTitle: string;
+  evidenceDescription: string;
+  actionLabel: string;
+  page: Page;
+};
 
 const navigation: { id: Page; label: string }[] = [
   { id: 'home', label: 'Home' },
@@ -14,25 +24,52 @@ const navigation: { id: Page; label: string }[] = [
   { id: 'bewijs', label: 'Mijn bewijs' },
 ];
 
-const evidenceGroups = [
+const evidenceStories: EvidenceStory[] = [
   {
-    title: '[VOEG HIER EEN LEERUITKOMST TOE]',
-    description: '[KORTE UITLEG VAN DEZE LEERUITKOMST]',
-    evidence: [
-      { title: '[TITEL VAN MIJN BEWIJS]', description: '[KORTE BESCHRIJVING VAN MIJN BEWIJS]', url: 'https://voorbeeld.nl/vervang-dit-met-jouw-link' },
-      { title: '[NOG EEN BEWIJS]', description: '[KORTE BESCHRIJVING VAN MIJN BEWIJS]', url: 'https://voorbeeld.nl/vervang-dit-met-jouw-link' },
-    ],
+    sprint: 1,
+    learningOutcomes: [2, 4],
+    title: 'Mijn AI-app: van Learning Story naar werkende applicatie',
+    description: 'Praktisch AI-onderzoek en ontwikkeling van een werkende applicatie.',
+    evidenceTitle: 'Mijn AI-app',
+    evidenceDescription: 'Van Learning Story naar werkende applicatie met Google AI Studio en Gemini API.',
+    actionLabel: 'Bekijk verhaal',
+    page: 'mijn-ai-app',
   },
   {
-    title: '[VOEG HIER EEN TWEEDE LEERUITKOMST TOE]',
-    description: '[KORTE UITLEG VAN DEZE LEERUITKOMST]',
-    evidence: [{ title: '[TITEL VAN MIJN BEWIJS]', description: '[KORTE BESCHRIJVING VAN MIJN BEWIJS]', url: 'https://voorbeeld.nl/vervang-dit-met-jouw-link' }],
+    sprint: 1,
+    learningOutcomes: [1, 3],
+    title: 'AI verandert de marketingwereld',
+    description: 'Research Story over de impact van AI op het werkveld van een B2C online marketeer.',
+    evidenceTitle: 'AI-blog: AI verandert de marketingwereld',
+    evidenceDescription: 'Mijn AI-blog als bewijs voor deze Research Story.',
+    actionLabel: 'Bekijk Research Story',
+    page: 'research-story-ai-blog',
+  },
+  {
+    sprint: 1,
+    learningOutcomes: [1, 3],
+    title: 'AI-onderzoek: leren onderzoeken met AI',
+    description: 'Mijn aanpak om AI als startpunt voor onderzoek te gebruiken en informatie in oorspronkelijke bronnen te controleren.',
+    evidenceTitle: 'Mijn onderzoeksaanpak',
+    evidenceDescription: 'Gestructureerde prompts, bronverificatie en APA-documentatie voor onderzoek naar AI in B2C marketing.',
+    actionLabel: 'Bekijk Learning Story',
+    page: 'ai-onderzoek',
+  },
+  {
+    sprint: 2,
+    learningOutcomes: [1, 2, 3, 4, 5],
+    title: 'Mijn portfolio koppelen aan Supabase',
+    description: 'Een blog over het dynamisch tonen van portfolio-projecten en bewijsstukken met Supabase.',
+    evidenceTitle: 'Supabase-blog',
+    evidenceDescription: 'Mijn leerproces rond databasekoppeling, dynamische portfolio-inhoud en bewijs per leeruitkomst.',
+    actionLabel: 'Lees blog',
+    page: 'supabase-blog',
   },
 ];
 
 function getPageFromPath(): Page {
   const path = window.location.pathname.replace(/^\//, '');
-  const validPages: Page[] = [...navigation.map((item) => item.id), 'mijn-ai-app', 'research-story-ai-blog'];
+  const validPages: Page[] = [...navigation.map((item) => item.id), 'mijn-ai-app', 'research-story-ai-blog', 'ai-onderzoek', 'supabase-blog'];
   return validPages.includes(path as Page) ? (path as Page) : 'home';
 }
 
@@ -79,6 +116,8 @@ function App() {
         {page === 'over-mij' && <AboutPage />}
         {page === 'mijn-ai-app' && <AIAppPage navigate={navigate} />}
         {page === 'research-story-ai-blog' && <ResearchStoryPage navigate={navigate} />}
+        {page === 'ai-onderzoek' && <AIResearchStoryPage navigate={navigate} />}
+        {page === 'supabase-blog' && <SupabasePortfolioStoryPage navigate={navigate} />}
         {page === 'bewijs' && <EvidencePage navigate={navigate} />}
       </main>
 
@@ -161,7 +200,6 @@ const aiAppFeatures = [
 const aiTechStack = [
   'Google AI Studio',
   'Gemini API',
-  '[VOEG EVENTUELE ANDERE TECHNOLOGIEËN TOE DIE IK HEB GEBRUIKT]',
 ];
 
 function AIAppPage({ navigate }: { navigate: (page: Page) => void }) {
@@ -224,46 +262,16 @@ function AIAppPage({ navigate }: { navigate: (page: Page) => void }) {
         <p className="lead-copy">
           Tijdens het bouwen ontdekte ik hoe belangrijk het is om een duidelijke gebruikersflow te ontwerpen en een AI-functie op een nuttige manier in te bouwen. Ik heb geleerd hoe Google AI Studio en de Gemini API kunnen helpen om een app slimmer en persoonlijker te maken.
         </p>
-        <div className="note-box">
-          <p>[BESCHRIJF HIER WAT IK HEB GELEERD]</p>
-        </div>
-      </section>
-
-      <section className="ai-app-section">
-        <div className="section-heading-block">
-          <p className="section-kicker">Reflectie</p>
-          <h2>Wat ging goed, wat vond ik lastig en wat zou ik anders doen?</h2>
-        </div>
-        <div className="reflection-grid">
-          <article className="reflection-card">
-            <h3>Wat ging goed?</h3>
-            <p>[MIJN REFLECTIE]</p>
-          </article>
-          <article className="reflection-card">
-            <h3>Wat vond ik lastig?</h3>
-            <p>[BESCHRIJF HIER WAT IK LASTIG VOND]</p>
-          </article>
-          <article className="reflection-card">
-            <h3>Wat zou ik de volgende keer anders doen?</h3>
-            <p>[VOEG HIER MIJN REFLECTIE TOE]</p>
-          </article>
-        </div>
       </section>
 
       <section className="ai-app-section">
         <div className="section-heading-block">
           <p className="section-kicker">Bewijs</p>
-          <h2>Mijn echte bewijs</h2>
+          <h2>Bekijk mijn code</h2>
         </div>
         <div className="proof-links">
-          <a href="https://voorbeeld.nl/vervang-dit-met-jouw-link" target="_blank" rel="noreferrer">
-            Bekijk de AI-app <ExternalLink size={15} />
-          </a>
           <a href="https://github.com/daan2005rie" target="_blank" rel="noreferrer">
-            Bekijk de code <ExternalLink size={15} />
-          </a>
-          <a href="https://voorbeeld.nl/vervang-dit-met-jouw-link" target="_blank" rel="noreferrer">
-            Bekijk aanvullende documentatie <ExternalLink size={15} />
+            GitHub <ExternalLink size={15} />
           </a>
         </div>
       </section>
@@ -366,16 +374,6 @@ function ResearchStoryPage({ navigate }: { navigate: (page: Page) => void }) {
       <div className="skills-list">{aiSkills.map(([title, description]) => <article className="skill-row" key={title}><h3>{title}</h3><p>{description}</p></article>)}</div>
     </section>
 
-    <section className="research-section reflection-section">
-      <div className="section-heading-block"><p className="section-kicker">Reflectie</p><h2>Wat neem ik mee?</h2></div>
-      <div className="reflection-list">
-        <article><h3>Wat heb ik onderzocht?</h3><p>[BESCHRIJF HIER KORT WAT IK HEB ONDERZOCHT]</p></article>
-        <article><h3>Wat heb ik geleerd?</h3><p>[BESCHRIJF HIER WAT IK HEB GELEERD]</p></article>
-        <article><h3>Wat betekent dit voor mij als toekomstig B2C online marketeer?</h3><p>[BESCHRIJF HIER WAT DIT VOOR MIJ BETEKENT]</p></article>
-        <article><h3>Reflectie op mijn Research Story</h3><p>[VOEG HIER MIJN PERSOONLIJKE REFLECTIE TOE]</p></article>
-      </div>
-    </section>
-
     <section className="research-section sources-section">
       <div className="section-heading-block"><p className="section-kicker">Bronnen</p><h2>Bronnenlijst volgens APA 7</h2></div>
       <ol className="sources-list">{aiBlogSources.map(([author, title, url]) => <li key={url}><span>{author} <em>{title}</em> </span><a href={url} target="_blank" rel="noreferrer">{url}</a></li>)}</ol>
@@ -385,60 +383,140 @@ function ResearchStoryPage({ navigate }: { navigate: (page: Page) => void }) {
   </PageIntro>;
 }
 
+const aiResearchStoryParagraphs = [
+  'Voor mijn Research Story heb ik geleerd hoe ik AI kan gebruiken als hulpmiddel bij het uitvoeren van onderzoek. Mijn doel was om te leren hoe ik op een goede en verantwoorde manier AI-researchtools kan inzetten om relevante en betrouwbare informatie te vinden. Hierbij heb ik onderzocht hoe AI mij kan helpen bij het verzamelen van informatie, zonder dat ik de antwoorden van AI zomaar als waarheid aanneem.',
+  'Mijn onderzoek ging over de invloed van AI op het werkveld van een B2C online marketeer. Ik wilde onder andere onderzoeken welke kansen en bedreigingen AI biedt en welke vaardigheden in de toekomst belangrijk worden voor een marketeer. Om hiervoor betrouwbare informatie te vinden, heb ik AI gebruikt als startpunt voor mijn onderzoek.',
+  'Een belangrijk onderdeel dat ik heb geleerd, is dat een AI-tool niet automatisch een betrouwbare bron is. AI kan bijvoorbeeld een onderzoek noemen dat interessant lijkt, maar de informatie kan verkeerd zijn, verouderd zijn of zelfs niet bestaan. Daarom heb ik geleerd om AI vooral te gebruiken om mogelijke bronnen en onderwerpen te vinden. Vervolgens ben ik zelf naar de oorspronkelijke bron gegaan om te controleren of de informatie daadwerkelijk in het onderzoek stond.',
+  'Ik heb hierbij gebruikgemaakt van gestructureerde prompts. In plaats van alleen te vragen om informatie over AI en marketing, heb ik mijn opdrachten specifieker gemaakt. Ik gaf bijvoorbeeld aan dat ik betrouwbare en wetenschappelijke bronnen wilde gebruiken en dat de bronnen binnen een bepaalde periode gepubliceerd moesten zijn. Hierdoor kreeg ik resultaten die beter aansloten bij mijn onderzoek.',
+  'Ook heb ik een overzicht bijgehouden van de prompts die ik heb gebruikt. Hierdoor kan ik terugzien hoe ik mijn onderzoek heb uitgevoerd en welke vragen ik aan AI heb gesteld. Dit helpt mij om mijn onderzoek beter te onderbouwen en maakt mijn werkwijze beter herhaalbaar.',
+  'Een andere belangrijke stap was het controleren van AI-antwoorden. Wanneer AI een bewering of onderzoek noemde, heb ik dit gecontroleerd in de oorspronkelijke bron. Ik keek daarbij niet alleen of de bron bestond, maar ook of de bron daadwerkelijk ondersteunde wat AI beweerde. Hierdoor merkte ik dat AI soms informatie vereenvoudigt of een conclusie anders formuleert dan in het oorspronkelijke onderzoek.',
+  'Daarnaast heb ik geleerd om mijn bronnen volgens de APA-regels te documenteren. Hierdoor zijn mijn bronnen beter terug te vinden en is duidelijk waar mijn informatie vandaan komt. Dit is belangrijk wanneer ik onderzoek gebruik voor een studieopdracht of professionele toepassing.',
+  'Door dit onderzoek heb ik geleerd dat AI vooral een hulpmiddel is binnen het onderzoeksproces. Het kan mij helpen om sneller ideeën, zoekrichtingen en relevante bronnen te vinden, maar de verantwoordelijkheid voor de betrouwbaarheid van mijn onderzoek blijft bij mijzelf. Ik moet daarom kritisch blijven kijken naar de informatie die AI geeft en belangrijke informatie altijd controleren.',
+  'Deze manier van werken neem ik mee in mijn verdere opleiding en toekomstige werk als online marketeer. Ik weet nu beter hoe ik AI kan gebruiken om efficiënter onderzoek te doen, terwijl ik tegelijkertijd kritisch blijf op de kwaliteit en betrouwbaarheid van de informatie.',
+];
+
+function AIResearchStoryPage({ navigate }: { navigate: (page: Page) => void }) {
+  return <PageIntro eyebrow="Learning Story" title="AI-onderzoek: leren onderzoeken met AI" intro="Mijn aanpak om AI-researchtools verantwoord te gebruiken en onderzoeksinformatie kritisch te controleren.">
+    <section className="research-section">
+      <div className="research-section-heading">
+        <p className="section-kicker">Mijn leerproces</p>
+        <span className="learning-outcome-badge">LU 1 &amp; LU 3</span>
+      </div>
+      <div className="blog-content">
+        <div className="blog-section">
+          {aiResearchStoryParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </div>
+      </div>
+    </section>
+    <div className="back-link-row"><button className="text-button" onClick={() => navigate('bewijs')}>← Terug naar mijn bewijs</button></div>
+  </PageIntro>;
+}
+
+const supabasePortfolioParagraphs = [
+  'Voor mijn leerproces binnen de minor Futureproof met AI heb ik geleerd hoe ik een Supabase-database kan koppelen aan mijn portfolio-website. Mijn doel hierbij was om mijn projecten en bewijsstukken niet alleen handmatig in de website te zetten, maar deze op een dynamische manier vanuit een database te kunnen tonen. Hiermee heb ik een nieuwe techniek geleerd die ik ook bij andere websites en applicaties kan gebruiken.',
+  'Voordat ik hiermee begon, stond de informatie op mijn portfolio voornamelijk rechtstreeks in de code van de website. Dit betekent dat ik voor iedere aanpassing de code moest wijzigen. Ik wilde onderzoeken hoe ik dit slimmer kon aanpakken. Daarom ben ik aan de slag gegaan met Supabase. Supabase is een platform waarmee je onder andere databases kunt maken en deze kunt koppelen aan websites en applicaties.',
+  'De eerste stap was het aanmaken van een database in Supabase. Hierin heb ik gegevens kunnen opslaan die betrekking hebben op mijn projecten en bewijsstukken. Vervolgens heb ik geleerd hoe ik vanuit mijn website verbinding kan maken met deze database. Dit was voor mij een belangrijk onderdeel van het leerproces, omdat ik hierdoor beter begrijp hoe een website informatie uit een externe database kan ophalen.',
+  'Na het maken van de koppeling heb ik ervoor gezorgd dat de informatie vanuit de database op mijn portfolio-website wordt ingeladen. Hierdoor is de inhoud van mijn website niet meer volledig afhankelijk van vaste teksten in de code. Wanneer er nieuwe informatie aan de database wordt toegevoegd of bestaande informatie wordt aangepast, kan deze informatie dynamisch op de website worden weergegeven.',
+  'Een ander onderdeel van mijn opdracht was het mogelijk maken om bewijsstukken per leeruitkomst te bekijken. Hiervoor heb ik gewerkt met de leeruitkomsten LU 1 tot en met LU 5. Bezoekers kunnen hierdoor gerichter bekijken welke bewijsstukken bij een bepaalde leeruitkomst horen. Dit maakt mijn portfolio overzichtelijker en zorgt ervoor dat mijn bewijsstukken beter te vinden zijn.',
+  'Tijdens het bouwen heb ik gemerkt dat een database koppelen meer inhoudt dan alleen het maken van een tabel. Ik moest ook begrijpen hoe mijn website gegevens opvraagt, hoe deze gegevens worden verwerkt en hoe ze vervolgens op de juiste plek op de website worden weergegeven. Hierdoor heb ik meer inzicht gekregen in hoe verschillende onderdelen van een webapplicatie met elkaar samenwerken.',
+  'Ik heb daarnaast geleerd dat het belangrijk is om goed na te denken over welke informatie je in een database opslaat en hoe je deze informatie beschikbaar maakt op een website. Omdat mijn portfolio online staat, is het ook belangrijk om rekening te houden met veiligheid en de manier waarop de database wordt benaderd.',
+  'Het koppelen van Supabase aan mijn portfolio heeft mij laten zien dat ik steeds meer onderdelen van een website zelfstandig kan bouwen en met elkaar kan verbinden. Waar ik eerst vooral bezig was met de zichtbare kant van mijn website, heb ik nu ook ervaring opgedaan met het werken met een database en het dynamisch ophalen van informatie.',
+  'Met deze opdracht heb ik geleerd hoe ik Supabase kan gebruiken als onderdeel van een website. De kennis die ik hiermee heb opgedaan kan ik ook toepassen in toekomstige projecten, bijvoorbeeld bij mijn sportapp. Hierdoor zie ik dat wat ik tijdens het bouwen van mijn portfolio leer, ook direct bruikbaar is voor andere AI- en webprojecten.',
+];
+
+function SupabasePortfolioStoryPage({ navigate }: { navigate: (page: Page) => void }) {
+  return <PageIntro eyebrow="Sprint 2 · Blog" title="Mijn portfolio koppelen aan Supabase" intro="Mijn leerproces rond het koppelen van een Supabase-database aan mijn portfolio-website.">
+    <section className="research-section">
+      <div className="research-section-heading">
+        <p className="section-kicker">Nieuwe blog</p>
+        <span className="learning-outcome-badge">LU 1 t/m LU 5</span>
+      </div>
+      <div className="blog-content">
+        <div className="blog-section">
+          {supabasePortfolioParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </div>
+      </div>
+      <div className="supabase-image-gallery">
+        <figure className="supabase-image-figure">
+          <img src="/assets/aistudio/Database%20website%20gekoppeld.png" alt="Database en website gekoppeld aan Supabase" />
+          <figcaption>Database website gekoppeld</figcaption>
+        </figure>
+        <figure className="supabase-image-figure">
+          <img src="/assets/aistudio/Screenshot%20database%20gekoppeld.png" alt="Screenshot van de gekoppelde database" />
+          <figcaption>Screenshot database gekoppeld</figcaption>
+        </figure>
+      </div>
+    </section>
+    <div className="back-link-row"><button className="text-button" onClick={() => navigate('bewijs')}>← Terug naar mijn bewijs</button></div>
+  </PageIntro>;
+}
+
 function EvidencePage({ navigate }: { navigate: (page: Page) => void }) {
-  const compactAiAppCard = {
-    title: 'Mijn AI-app',
-    description: 'Van Learning Story naar werkende applicatie met Google AI Studio en Gemini API.',
-    detailPage: true,
-  };
+  const [selectedOutcomes, setSelectedOutcomes] = useState<number[]>([]);
+  const learningOutcomes = [...new Set(evidenceStories.flatMap((story) => story.learningOutcomes))].sort((first, second) => first - second);
+  const visibleStories = evidenceStories.filter((story) => (
+    selectedOutcomes.length === 0 || story.learningOutcomes.some((outcome) => selectedOutcomes.includes(outcome))
+  ));
+  const sprintNumbers = [...new Set([1, 2, ...evidenceStories.map((story) => story.sprint)])].sort((first, second) => first - second);
 
   return <PageIntro eyebrow="Mijn bewijs" title="Leren door te doen, delen en onderbouwen." intro="Op deze pagina verzamel ik de bewijzen waarmee ik mijn behaalde leeruitkomsten aantoon. Grote bestanden staan extern en worden hier gelinkt.">
-    <div className="evidence-notice"><strong>Praktische afspraak</strong><span>Gebruik bijvoorbeeld OneDrive voor documenten en YouTube voor video’s. Zo blijven grote bestanden buiten GitHub en Vercel.</span></div>
+    <fieldset className="evidence-filters">
+      <legend>Filter op leeruitkomsten</legend>
+      <div className="evidence-filter-controls">
+        <div className="evidence-filter-options">
+          {learningOutcomes.map((outcome) => (
+            <label className="evidence-filter-option" key={outcome}>
+              <input
+                type="checkbox"
+                checked={selectedOutcomes.includes(outcome)}
+                onChange={() => setSelectedOutcomes((current) => (
+                  current.includes(outcome)
+                    ? current.filter((selected) => selected !== outcome)
+                    : [...current, outcome]
+                ))}
+              />
+              <span>LU {outcome}</span>
+            </label>
+          ))}
+        </div>
+        {selectedOutcomes.length > 0 && (
+          <button className="text-button" type="button" onClick={() => setSelectedOutcomes([])}>
+            Wis filters
+          </button>
+        )}
+      </div>
+    </fieldset>
     <div className="evidence-list">
-      <section className="evidence-group">
-        <div className="group-heading">
-          <span className="number">LU</span>
-          <div>
-            <h2>LU 2 &amp; LU 4</h2>
-            <p>Praktisch AI-onderzoek en ontwikkeling van een werkende applicatie.</p>
-          </div>
-        </div>
-
-        <div className="evidence-cards compact-evidence-cards">
-          <article className="evidence-card evidence-card-compact">
-            <div>
-              <h3>{compactAiAppCard.title}</h3>
-              <p>{compactAiAppCard.description}</p>
-            </div>
-            <button className="evidence-link evidence-button" onClick={() => navigate('mijn-ai-app')}>
-              Bekijk verhaal <ExternalLink size={15} />
-            </button>
-          </article>
-        </div>
-      </section>
-
-      <section className="evidence-group">
-        <div className="group-heading">
-          <span className="number">LU</span>
-          <div>
-            <h2>LU 1 &amp; LU 3</h2>
-            <p>Research Story over de impact van AI op het werkveld van een B2C online marketeer.</p>
-          </div>
-        </div>
-        <div className="evidence-cards compact-evidence-cards">
-          <article className="evidence-card evidence-card-compact">
-            <div>
-              <h3>AI-blog: AI verandert de marketingwereld</h3>
-              <p>Mijn AI-blog als bewijs voor deze Research Story.</p>
-            </div>
-            <button className="evidence-link evidence-button" onClick={() => navigate('research-story-ai-blog')}>
-              Bekijk Research Story <ExternalLink size={15} />
-            </button>
-          </article>
-        </div>
-      </section>
-
-      {evidenceGroups.map((group) => <section className="evidence-group" key={group.title}><div className="group-heading"><span className="number">LU</span><div><h2>{group.title}</h2><p>{group.description}</p></div></div><div className="evidence-cards">{group.evidence.map((item) => <article className="evidence-card" key={item.title}><div><h3>{item.title}</h3><p>{item.description}</p></div><a className="evidence-link" href={item.url} target="_blank" rel="noreferrer">Bekijk bewijs <ExternalLink size={15} /></a></article>)}</div></section>)}
+      {visibleStories.length === 0 && <p className="evidence-empty-state">Geen bewijs gevonden voor deze selectie.</p>}
+      {sprintNumbers.map((sprint) => (
+        <section className="evidence-sprint" aria-labelledby={`sprint-${sprint}-heading`} key={sprint}>
+          <header className="evidence-sprint-heading">
+            <h2 id={`sprint-${sprint}-heading`}>Sprint {sprint}</h2>
+          </header>
+          {visibleStories.filter((story) => story.sprint === sprint).map((story) => (
+            <section className="evidence-group" key={story.title}>
+              <div className="group-heading">
+                <span className="learning-outcome-badge">LU {story.learningOutcomes.join(' & LU ')}</span>
+                <div>
+                  <h3>{story.title}</h3>
+                  <p>{story.description}</p>
+                </div>
+              </div>
+              <div className="evidence-cards compact-evidence-cards">
+                <article className="evidence-card evidence-card-compact">
+                  <div>
+                    <h3>{story.evidenceTitle}</h3>
+                    <p>{story.evidenceDescription}</p>
+                  </div>
+                  <button className="evidence-link evidence-button" onClick={() => navigate(story.page)}>
+                    {story.actionLabel} <ExternalLink size={15} />
+                  </button>
+                </article>
+              </div>
+            </section>
+          ))}
+        </section>
+      ))}
     </div>
   </PageIntro>;
 }
