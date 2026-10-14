@@ -6,7 +6,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { ArrowRight, ExternalLink, Menu, Sparkles, X } from 'lucide-react';
 
-type Page = 'home' | 'over-mij' | 'mijn-ai-app' | 'research-story-ai-blog' | 'ai-onderzoek' | 'supabase-blog' | 'bewijs';
+type Page = 'home' | 'over-mij' | 'mijn-ai-app' | 'research-story-ai-blog' | 'ai-onderzoek' | 'supabase-blog' | 'ai-it-regisseur' | 'bewijs';
 type EvidenceStory = {
   sprint: number;
   learningOutcomes: number[];
@@ -65,11 +65,21 @@ const evidenceStories: EvidenceStory[] = [
     actionLabel: 'Lees blog',
     page: 'supabase-blog',
   },
+  {
+    sprint: 3,
+    learningOutcomes: [1, 3],
+    title: 'AI verandert IT-beroepen: van programmeur naar AI-regisseur',
+    description: 'Research Story over hoe generatieve AI het werk van IT-professionals verandert.',
+    evidenceTitle: 'AI-blog: van programmeur naar AI-regisseur',
+    evidenceDescription: 'Onderzoek naar de kansen, risico’s en blijvende menselijke verantwoordelijkheid bij AI in IT.',
+    actionLabel: 'Bekijk Research Story',
+    page: 'ai-it-regisseur',
+  },
 ];
 
 function getPageFromPath(): Page {
   const path = window.location.pathname.replace(/^\//, '');
-  const validPages: Page[] = [...navigation.map((item) => item.id), 'mijn-ai-app', 'research-story-ai-blog', 'ai-onderzoek', 'supabase-blog'];
+  const validPages: Page[] = [...navigation.map((item) => item.id), 'mijn-ai-app', 'research-story-ai-blog', 'ai-onderzoek', 'supabase-blog', 'ai-it-regisseur'];
   return validPages.includes(path as Page) ? (path as Page) : 'home';
 }
 
@@ -118,6 +128,7 @@ function App() {
         {page === 'research-story-ai-blog' && <ResearchStoryPage navigate={navigate} />}
         {page === 'ai-onderzoek' && <AIResearchStoryPage navigate={navigate} />}
         {page === 'supabase-blog' && <SupabasePortfolioStoryPage navigate={navigate} />}
+        {page === 'ai-it-regisseur' && <AITRegisseurStoryPage navigate={navigate} />}
         {page === 'bewijs' && <EvidencePage navigate={navigate} />}
       </main>
 
@@ -446,6 +457,98 @@ function SupabasePortfolioStoryPage({ navigate }: { navigate: (page: Page) => vo
           <figcaption>Screenshot database gekoppeld</figcaption>
         </figure>
       </div>
+    </section>
+    <div className="back-link-row"><button className="text-button" onClick={() => navigate('bewijs')}>← Terug naar mijn bewijs</button></div>
+  </PageIntro>;
+}
+
+const aiITStorySections = [
+  {
+    title: 'Van uitvoerder naar AI-regisseur',
+    paragraphs: [
+      'Generatieve AI verandert de IT-sector in hoog tempo. Tools zoals GitHub Copilot kunnen code schrijven en aanvullen, fouten opsporen en documentatie maken. Daardoor verandert het dagelijkse werk van IT-professionals. AI neemt vooral repetitieve en voorspelbare taken over, maar vervangt IT-beroepen niet zomaar volledig. De komende vijf tot tien jaar verschuift de rol van veel IT’ers van uitvoerend specialist naar iemand die AI aanstuurt, controleert en verantwoordelijk inzet.',
+      'De kern van het werk verschuift daarmee: niet alleen iets bouwen, maar ook beoordelen of een AI-oplossing correct, veilig, onderhoudbaar en passend is voor de organisatie en de gebruiker.',
+    ],
+  },
+  {
+    title: 'Softwareontwikkeling en leren programmeren',
+    paragraphs: [
+      'Een duidelijk voorbeeld is softwareontwikkeling. In een gecontroleerd experiment met GitHub Copilot voltooiden ontwikkelaars met toegang tot de AI-tool een programmeertaak 55,8% sneller dan ontwikkelaars zonder die tool (Peng et al., 2023). AI kan helpen bij het schrijven van code, het maken van voorbeelden en het versnellen van eenvoudig programmeerwerk. Een systematische review laat zien dat grote taalmodellen onder meer worden ingezet voor codegeneratie, code-aanvulling, foutopsporing, testen, documentatie en code review (Hou et al., 2024). Complexe softwareontwikkeling, systeemontwerp en veiligheid blijven wel menselijke verantwoordelijkheden.',
+      'Ook het werk van beginnende ontwikkelaars verandert. AI kan helpen bij het leren programmeren, het begrijpen van code en het oplossen van fouten. Junior developers moeten de output echter kritisch blijven beoordelen. Wie te veel op AI vertrouwt, loopt het risico minder goed te leren om zelfstandig problemen op te lossen en fundamentele programmeerkennis op te bouwen (Ouyang et al., 2025). AI maakt leren toegankelijker, maar vraagt ook zelfdiscipline en kritisch denken.',
+    ],
+  },
+  {
+    title: 'Cybersecurity: hulp én extra risico',
+    paragraphs: [
+      'In cybersecurity kan AI helpen bij het herkennen van bedreigingen, het analyseren van malware, het opstellen van rapporten en het ondersteunen van incident response. Grote taalmodellen bieden hier mogelijkheden, maar brengen ook risico’s mee: ze kunnen fouten maken, kwetsbaarheden missen of door aanvallers worden misbruikt (Zhang et al., 2024). Cybersecurityspecialisten blijven nodig om risico’s te beoordelen, systemen te testen en tijdens incidenten weloverwogen beslissingen te nemen.',
+    ],
+  },
+  {
+    title: 'IT-support wordt specialistischer',
+    paragraphs: [
+      'Ook IT-support verandert. Machine learning kan helpen om tickets automatisch te classificeren, meldingen toe te wijzen en oplossingen voor te stellen. Dat kan de werkdruk verlagen en gebruikers sneller helpen (Sarker et al., 2019). Complexe technische problemen, escalaties en persoonlijk contact blijven echter mensenwerk. De supportmedewerker verschuift daardoor van het beantwoorden van standaardvragen naar het oplossen van ingewikkelde incidenten.',
+    ],
+  },
+  {
+    title: 'Welke vaardigheden worden belangrijker?',
+    paragraphs: [
+      'De bredere arbeidsmarkt ondersteunt het beeld dat AI vooral taken verandert. Het World Economic Forum (2025) verwacht dat technologische vaardigheden, AI en big data, cybersecurity en analytisch denken belangrijker worden. Tegelijkertijd blijven creatief denken, communicatie, samenwerking en probleemoplossend vermogen essentieel. Ook het UWV (2025) concludeert dat AI vooral het takenpakket verandert. ICT’ers blijven nodig voor ontwerp, beheer, beveiliging, integratie en verantwoordelijkheid, ook wanneer AI eenvoudige code kan schrijven.',
+    ],
+  },
+  {
+    title: 'Verantwoordelijkheid en regelgeving',
+    paragraphs: [
+      'Regelgeving maakt die verantwoordelijkheid nog belangrijker. De Europese AI Act stelt voor bepaalde AI-systemen eisen aan onder meer risicobeheer, documentatie, cybersecurity, transparantie en menselijk toezicht (European Commission, 2024). Voor IT-professionals betekent dit dat zij bij het bouwen van technische oplossingen ook moeten nadenken over privacy, veiligheid en compliance. ENISA en het AI Office (2025) benadrukken dat cybersecurity een vast onderdeel moet zijn van veilige AI-ontwikkeling.',
+    ],
+  },
+  {
+    title: 'De IT-professional als AI-regisseur',
+    paragraphs: [
+      'De grootste kans van AI is niet dat IT’ers worden vervangen, maar dat zij productiever kunnen werken. AI kan ondersteunen bij het maken en testen van code, het analyseren van data en het oplossen van standaardproblemen. Daar staan risico’s tegenover: afhankelijkheid van AI, onbetrouwbare output, veiligheidsproblemen en mogelijk minder aandacht voor basisvaardigheden bij beginnende professionals.',
+      'De IT-professional van de toekomst is daarom geen concurrent van AI, maar een regisseur die AI verantwoord inzet. Die professional begrijpt hoe AI werkt, wanneer de output betrouwbaar is en wanneer menselijke controle nodig blijft. De belangrijkste vraag is niet alleen of AI code kan schrijven, maar of die code veilig, correct, onderhoudbaar en passend is voor de organisatie en de gebruiker.',
+    ],
+  },
+];
+
+const aiITStorySources = [
+  ['European Commission. (2024).', 'AI Act.', 'https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai'],
+  ['European Union Agency for Cybersecurity, & European Commission AI Office. (2025).', 'The EU AI Act and cybersecurity [Webinar].', 'https://www.enisa.europa.eu/sites/default/files/2025-04/AI_Office_AIA%20and%20cyber-ENISA_Webinar.pdf'],
+  ['Hou, X., Zhao, Y., Liu, Y., Yang, Z., Wang, K., Li, L., Luo, X., Lo, D., & Grundy, J. (2024).', 'Large language models for software engineering: A systematic literature review. ACM Transactions on Software Engineering and Methodology, 33(8), Article 220.', 'https://doi.org/10.1145/3695988'],
+  ['Ouyang, Y., et al. (2025).', 'Junior software developers’ perspectives on adopting LLMs for software engineering: A systematic literature review [Preprint]. arXiv.', 'https://doi.org/10.48550/arXiv.2503.07556'],
+  ['Peng, S., Kalliamvakou, E., Cihon, P., & Demirer, M. (2023).', 'The impact of AI on developer productivity: Evidence from GitHub Copilot [Preprint]. arXiv.', 'https://doi.org/10.48550/arXiv.2302.06590'],
+  ['Sarker, I. H., et al. (2019).', 'Corporate IT-support help-desk process hybrid-automation solution with machine learning approach [Preprint]. arXiv.', 'https://doi.org/10.48550/arXiv.1909.09018'],
+  ['UWV. (2025).', 'Op weg naar AI die werkt voor iedereen.', 'https://www.uwv.nl/assets/files/2189148b-b975-475a-987f-e307bfeeae54/Op_weg_naar_AI_die_werkt_voor_iedereen_DEF.pdf'],
+  ['World Economic Forum. (2025).', 'The Future of Jobs Report 2025.', 'https://www.weforum.org/publications/the-future-of-jobs-report-2025/'],
+  ['Zhang, J., Bu, H., Wen, H., Liu, Y., Fei, H., Xi, R., Li, L., Yang, Y., Zhu, H., & Meng, D. (2024).', 'When LLMs meet cybersecurity: A systematic literature review [Preprint]. arXiv.', 'https://doi.org/10.48550/arXiv.2405.03644'],
+];
+
+function AITRegisseurStoryPage({ navigate }: { navigate: (page: Page) => void }) {
+  return <PageIntro eyebrow="Sprint 3 · Research Story" title="AI verandert IT-beroepen: van programmeur naar AI-regisseur" intro="Hoe verandert generatieve AI het werk van IT-professionals, en welke verantwoordelijkheid blijft bij mensen liggen?">
+    <section className="research-section">
+      <div className="research-section-heading">
+        <p className="section-kicker">Research Story</p>
+        <span className="learning-outcome-badge">LU 1 &amp; LU 3</span>
+      </div>
+      <div className="blog-content">
+        {aiITStorySections.map((section) => (
+          <div className="blog-section" key={section.title}>
+            <h2>{section.title}</h2>
+            {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </div>
+        ))}
+      </div>
+      <aside className="infographic-panel">
+        <div className="infographic-main-card">
+          <img src="/assets/aistudio/InfographicITonderzoek.jpg" alt="Infographic over de invloed van AI op IT-beroepen" />
+        </div>
+        <a className="download-button" href="/assets/aistudio/InfographicITonderzoek.jpg" download="InfographicITonderzoek.jpg">
+          Download infographic
+        </a>
+      </aside>
+    </section>
+    <section className="research-section sources-section">
+      <div className="section-heading-block"><p className="section-kicker">Bronnen</p><h2>Literatuurlijst</h2></div>
+      <ol className="sources-list">{aiITStorySources.map(([author, title, url]) => <li key={url}><span>{author} <em>{title}</em> </span><a href={url} target="_blank" rel="noreferrer">{url}</a></li>)}</ol>
     </section>
     <div className="back-link-row"><button className="text-button" onClick={() => navigate('bewijs')}>← Terug naar mijn bewijs</button></div>
   </PageIntro>;
